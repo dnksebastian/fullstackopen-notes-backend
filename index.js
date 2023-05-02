@@ -1,8 +1,9 @@
-// const http = require('http')
-
+require('dotenv').config()
 const express = require('express')
-const cors = require('cors')
 const app = express()
+const cors = require('cors')
+
+const Note = require('./models/note')
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -16,38 +17,19 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
+app.use(cors())
 app.use(express.json())
 app.use(requestLogger)
-app.use(cors())
 app.use(express.static('build'))
 
 let notes = [
-    {
-        id: 1, 
-        content: "HTML is easy",
-        important: true
-    },
-    {   id: 2,
-        content: "Browser can execute only JavaScript",
-        important: false
-    },
-    {   id: 3,
-        content: "GET and POST are the most important methods of HTTP protocol",
-        important: true
-    }
 ]
-
-// const app = http.createServer((request, response) => {  
-//     response.writeHead(200, { 'Content-Type': 'application/json' })  
-//     response.end(JSON.stringify(notes))
-// })
-
-app.get('/', (request, response) => {
-    response.send('<h1>Hello World!</h1>')
-  })
   
   app.get('/api/notes', (request, response) => {
-    response.json(notes)
+    // response.json(notes)
+    Note.find({}).then(notes => {
+      response.json(notes)
+    })
   })
 
   app.get('/api/notes/:id', (request, response) => {
@@ -96,7 +78,7 @@ app.get('/', (request, response) => {
 
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
