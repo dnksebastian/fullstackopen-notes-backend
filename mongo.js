@@ -10,6 +10,7 @@ const password = process.argv[2]
 const url =
   `mongodb+srv://fullstacknotes:${password}@notesdb.6ocljjl.mongodb.net/noteApp?retryWrites=true&w=majority`
 
+
 mongoose.set('strictQuery',false)
 mongoose.connect(url)
 
